@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zadanie 4 - Lightbox Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 36px;
+        }
+
+        /* Galeria */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-item::after {
+            content: '🔍';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .gallery-item:hover::after {
+            opacity: 0.8;
+        }
+
+        /* Lightbox modal */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            animation: fadeIn 0.3s;
+        }
+
+        .lightbox.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            animation: zoomIn 0.3s;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); }
+            to { transform: scale(1); }
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 5px;
+            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+        }
+
+        /* Przyciski nawigacji */
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            font-size: 50px;
+            color: white;
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: transform 0.3s;
+            z-index: 10000;
+        }
+
+        .close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        .prev-btn, .next-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            padding: 20px 25px;
+            border-radius: 5px;
+            transition: background 0.3s;
+            z-index: 10000;
+        }
+
+        .prev-btn:hover, .next-btn:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
+        .prev-btn {
+            left: 30px;
+        }
+
+        .next-btn {
+            right: 30px;
+        }
+
+        /* Licznik zdjęć */
+        .image-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 18px;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .gallery {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 10px;
+            }
+
+            .gallery-item img {
+                height: 150px;
+            }
+
+            .close-btn {
+                top: 10px;
+                right: 10px;
+                font-size: 40px;
+            }
+
+            .prev-btn, .next-btn {
+                font-size: 30px;
+                padding: 15px 20px;
+            }
+
+            .prev-btn {
+                left: 10px;
+            }
+
+            .next-btn {
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Galeria Lightbox</h1>
+        
+        <div class="gallery" id="gallery">
+            <!-- Używam placeholder images z różnymi kolorami -->
+            <div class="gallery-item" data-index="0">
+                <img src="https://via.placeholder.com/400x300/FF6B6B/FFFFFF?text=Zdjęcie+1" alt="Zdjęcie 1">
+            </div>
+            <div class="gallery-item" data-index="1">
+                <img src="https://via.placeholder.com/400x300/4ECDC4/FFFFFF?text=Zdjęcie+2" alt="Zdjęcie 2">
+            </div>
+            <div class="gallery-item" data-index="2">
+                <img src="https://via.placeholder.com/400x300/45B7D1/FFFFFF?text=Zdjęcie+3" alt="Zdjęcie 3">
+            </div>
+            <div class="gallery-item" data-index="3">
+                <img src="https://via.placeholder.com/400x300/FFA07A/FFFFFF?text=Zdjęcie+4" alt="Zdjęcie 4">
+            </div>
+            <div class="gallery-item" data-index="4">
+                <img src="https://via.placeholder.com/400x300/98D8C8/FFFFFF?text=Zdjęcie+5" alt="Zdjęcie 5">
+            </div>
+            <div class="gallery-item" data-index="5">
+                <img src="https://via.placeholder.com/400x300/F7DC6F/333333?text=Zdjęcie+6" alt="Zdjęcie 6">
+            </div>
+            <div class="gallery-item" data-index="6">
+                <img src="https://via.placeholder.com/400x300/BB8FCE/FFFFFF?text=Zdjęcie+7" alt="Zdjęcie 7">
+            </div>
+            <div class="gallery-item" data-index="7">
+                <img src="https://via.placeholder.com/400x300/85C1E2/FFFFFF?text=Zdjęcie+8" alt="Zdjęcie 8">
+            </div>
+            <div class="gallery-item" data-index="8">
+                <img src="https://via.placeholder.com/400x300/F8B88B/FFFFFF?text=Zdjęcie+9" alt="Zdjęcie 9">
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <button class="close-btn" id="closeBtn">&times;</button>
+        <button class="prev-btn" id="prevBtn">&#10094;</button>
+        <div class="lightbox-content">
+            <img src="" alt="" id="lightboxImg">
+        </div>
+        <button class="next-btn" id="nextBtn">&#10095;</button>
+        <div class="image-counter" id="counter"></div>
+    </div>
+
+    <script>
+        const gallery = document.getElementById('gallery');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const closeBtn = document.getElementById('closeBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const counter = document.getElementById('counter');
+
+        let currentIndex = 0;
+        const totalImages = galleryItems.length;
+
+        // Funkcja otwierająca lightbox
+        function openLightbox(index) {
+            currentIndex = index;
+            const img = galleryItems[index].querySelector('img');
+            lightboxImg.src = img.src;
+            lightboxImg.alt = img.alt;
+            updateCounter();
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Zablokuj scrollowanie
+        }
+
+        // Funkcja zamykająca lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Odblokuj scrollowanie
+        }
+
+        // Funkcja pokazująca poprzednie zdjęcie
+        function showPrevious() {
+            currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+            const img = galleryItems[currentIndex].querySelector('img');
+            lightboxImg.src = img.src;
+            lightboxImg.alt = img.alt;
+            updateCounter();
+        }
+
+        // Funkcja pokazująca następne zdjęcie
+        function showNext() {
+            currentIndex = (currentIndex + 1) % totalImages;
+            const img = galleryItems[currentIndex].querySelector('img');
+            lightboxImg.src = img.src;
+            lightboxImg.alt = img.alt;
+            updateCounter();
+        }
+
+        // Aktualizacja licznika
+        function updateCounter() {
+            counter.textContent = `${currentIndex + 1} / ${totalImages}`;
+        }
+
+        // Event listeners dla elementów galerii
+        galleryItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                openLightbox(index);
+            });
+        });
+
+        // Event listener dla przycisku zamknięcia
+        closeBtn.addEventListener('click', closeLightbox);
+
+        // Event listeners dla przycisków nawigacji
+        prevBtn.addEventListener('click', showPrevious);
+        nextBtn.addEventListener('click', showNext);
+
+        // Zamknij lightbox po kliknięciu w tło
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Obsługa klawiatury
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+
+            if (e.key === 'Escape') {
+                closeLightbox();
+            } else if (e.key === 'ArrowLeft') {
+                showPrevious();
+            } else if (e.key === 'ArrowRight') {
+                showNext();
+            }
+        });
+
+        // Zapobiegnij przewijaniu strzałkami gdy lightbox jest otwarty
+        document.addEventListener('keydown', (e) => {
+            if (lightbox.classList.contains('active') && 
+                (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
