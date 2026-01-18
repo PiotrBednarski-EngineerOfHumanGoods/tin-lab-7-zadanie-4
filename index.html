@@ -29,6 +29,7 @@
             font-size: 36px;
         }
 
+        /* Galeria */
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -72,7 +73,7 @@
             opacity: 0.8;
         }
 
-
+        /* Lightbox modal */
         .lightbox {
             display: none;
             position: fixed;
@@ -115,7 +116,7 @@
             box-shadow: 0 0 30px rgba(255,255,255,0.3);
         }
 
-
+        /* Przyciski nawigacji */
         .close-btn {
             position: absolute;
             top: 20px;
@@ -173,7 +174,7 @@
             border-radius: 20px;
         }
 
-
+        /* Responsive */
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -210,38 +211,37 @@
         <h1>Galeria Lightbox</h1>
         
         <div class="gallery" id="gallery">
-
             <div class="gallery-item" data-index="0">
-                <img src="https://via.placeholder.com/400x300/FF6B6B/FFFFFF?text=Zdjęcie+1" alt="Zdjęcie 1">
+                <img src="https://picsum.photos/400/300?random=1" alt="Zachód słońca nad oceanem">
             </div>
             <div class="gallery-item" data-index="1">
-                <img src="https://via.placeholder.com/400x300/4ECDC4/FFFFFF?text=Zdjęcie+2" alt="Zdjęcie 2">
+                <img src="https://picsum.photos/400/300?random=2" alt="Górski krajobraz">
             </div>
             <div class="gallery-item" data-index="2">
-                <img src="https://via.placeholder.com/400x300/45B7D1/FFFFFF?text=Zdjęcie+3" alt="Zdjęcie 3">
+                <img src="https://picsum.photos/400/300?random=3" alt="Architektura nowoczesna">
             </div>
             <div class="gallery-item" data-index="3">
-                <img src="https://via.placeholder.com/400x300/FFA07A/FFFFFF?text=Zdjęcie+4" alt="Zdjęcie 4">
+                <img src="https://picsum.photos/400/300?random=4" alt="Leśna ścieżka">
             </div>
             <div class="gallery-item" data-index="4">
-                <img src="https://via.placeholder.com/400x300/98D8C8/FFFFFF?text=Zdjęcie+5" alt="Zdjęcie 5">
+                <img src="https://picsum.photos/400/300?random=5" alt="Miejski pejzaż nocą">
             </div>
             <div class="gallery-item" data-index="5">
-                <img src="https://via.placeholder.com/400x300/F7DC6F/333333?text=Zdjęcie+6" alt="Zdjęcie 6">
+                <img src="https://picsum.photos/400/300?random=6" alt="Kwiatowy ogród">
             </div>
             <div class="gallery-item" data-index="6">
-                <img src="https://via.placeholder.com/400x300/BB8FCE/FFFFFF?text=Zdjęcie+7" alt="Zdjęcie 7">
+                <img src="https://picsum.photos/400/300?random=7" alt="Plaża o wschodzie słońca">
             </div>
             <div class="gallery-item" data-index="7">
-                <img src="https://via.placeholder.com/400x300/85C1E2/FFFFFF?text=Zdjęcie+8" alt="Zdjęcie 8">
+                <img src="https://picsum.photos/400/300?random=8" alt="Most nad rzeką">
             </div>
             <div class="gallery-item" data-index="8">
-                <img src="https://via.placeholder.com/400x300/F8B88B/FFFFFF?text=Zdjęcie+9" alt="Zdjęcie 9">
+                <img src="https://picsum.photos/400/300?random=9" alt="Jesienne liście">
             </div>
         </div>
     </div>
 
-
+    <!-- Lightbox Modal -->
     <div class="lightbox" id="lightbox">
         <button class="close-btn" id="closeBtn">&times;</button>
         <button class="prev-btn" id="prevBtn">&#10094;</button>
@@ -273,16 +273,16 @@
             lightboxImg.alt = img.alt;
             updateCounter();
             lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden'; // Zablokuj scrollowanie
         }
 
-
+        // Funkcja zamykająca lightbox
         function closeLightbox() {
             lightbox.classList.remove('active');
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = 'auto'; // Odblokuj scrollowanie
         }
 
-
+        // Funkcja pokazująca poprzednie zdjęcie
         function showPrevious() {
             currentIndex = (currentIndex - 1 + totalImages) % totalImages;
             const img = galleryItems[currentIndex].querySelector('img');
@@ -291,7 +291,7 @@
             updateCounter();
         }
 
-
+        // Funkcja pokazująca następne zdjęcie
         function showNext() {
             currentIndex = (currentIndex + 1) % totalImages;
             const img = galleryItems[currentIndex].querySelector('img');
@@ -300,24 +300,24 @@
             updateCounter();
         }
 
-
+        // Aktualizacja licznika
         function updateCounter() {
             counter.textContent = `${currentIndex + 1} / ${totalImages}`;
         }
 
-
+        // Event listeners dla elementów galerii
         galleryItems.forEach((item, index) => {
             item.addEventListener('click', () => {
                 openLightbox(index);
             });
         });
 
-
         closeBtn.addEventListener('click', closeLightbox);
 
 
         prevBtn.addEventListener('click', showPrevious);
         nextBtn.addEventListener('click', showNext);
+
 
         lightbox.addEventListener('click', (e) => {
             if (e.target === lightbox) {
@@ -337,6 +337,7 @@
                 showNext();
             }
         });
+
 
         document.addEventListener('keydown', (e) => {
             if (lightbox.classList.contains('active') && 
