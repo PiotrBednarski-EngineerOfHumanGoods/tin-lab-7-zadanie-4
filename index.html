@@ -29,7 +29,6 @@
             font-size: 36px;
         }
 
-        /* Galeria */
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -73,7 +72,7 @@
             opacity: 0.8;
         }
 
-        /* Lightbox modal */
+
         .lightbox {
             display: none;
             position: fixed;
@@ -116,7 +115,7 @@
             box-shadow: 0 0 30px rgba(255,255,255,0.3);
         }
 
-        /* Przyciski nawigacji */
+
         .close-btn {
             position: absolute;
             top: 20px;
@@ -174,7 +173,7 @@
             border-radius: 20px;
         }
 
-        /* Responsive */
+
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -211,7 +210,7 @@
         <h1>Galeria Lightbox</h1>
         
         <div class="gallery" id="gallery">
-            <!-- Używam placeholder images z różnymi kolorami -->
+
             <div class="gallery-item" data-index="0">
                 <img src="https://via.placeholder.com/400x300/FF6B6B/FFFFFF?text=Zdjęcie+1" alt="Zdjęcie 1">
             </div>
@@ -242,7 +241,7 @@
         </div>
     </div>
 
-    <!-- Lightbox Modal -->
+
     <div class="lightbox" id="lightbox">
         <button class="close-btn" id="closeBtn">&times;</button>
         <button class="prev-btn" id="prevBtn">&#10094;</button>
@@ -274,16 +273,16 @@
             lightboxImg.alt = img.alt;
             updateCounter();
             lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Zablokuj scrollowanie
+            document.body.style.overflow = 'hidden';
         }
 
-        // Funkcja zamykająca lightbox
+
         function closeLightbox() {
             lightbox.classList.remove('active');
-            document.body.style.overflow = 'auto'; // Odblokuj scrollowanie
+            document.body.style.overflow = 'auto';
         }
 
-        // Funkcja pokazująca poprzednie zdjęcie
+
         function showPrevious() {
             currentIndex = (currentIndex - 1 + totalImages) % totalImages;
             const img = galleryItems[currentIndex].querySelector('img');
@@ -292,7 +291,7 @@
             updateCounter();
         }
 
-        // Funkcja pokazująca następne zdjęcie
+
         function showNext() {
             currentIndex = (currentIndex + 1) % totalImages;
             const img = galleryItems[currentIndex].querySelector('img');
@@ -301,33 +300,32 @@
             updateCounter();
         }
 
-        // Aktualizacja licznika
+
         function updateCounter() {
             counter.textContent = `${currentIndex + 1} / ${totalImages}`;
         }
 
-        // Event listeners dla elementów galerii
+
         galleryItems.forEach((item, index) => {
             item.addEventListener('click', () => {
                 openLightbox(index);
             });
         });
 
-        // Event listener dla przycisku zamknięcia
+
         closeBtn.addEventListener('click', closeLightbox);
 
-        // Event listeners dla przycisków nawigacji
+
         prevBtn.addEventListener('click', showPrevious);
         nextBtn.addEventListener('click', showNext);
 
-        // Zamknij lightbox po kliknięciu w tło
         lightbox.addEventListener('click', (e) => {
             if (e.target === lightbox) {
                 closeLightbox();
             }
         });
 
-        // Obsługa klawiatury
+
         document.addEventListener('keydown', (e) => {
             if (!lightbox.classList.contains('active')) return;
 
@@ -340,7 +338,6 @@
             }
         });
 
-        // Zapobiegnij przewijaniu strzałkami gdy lightbox jest otwarty
         document.addEventListener('keydown', (e) => {
             if (lightbox.classList.contains('active') && 
                 (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
